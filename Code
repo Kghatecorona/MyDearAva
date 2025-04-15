@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Loading Page Styles */
+        .loading-page {
+            background: linear-gradient(135deg, #f6d5f7 0%, #fbe9d7 100%);
+            text-align: center;
+        }
+
+        .loading-container {
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .loading-text {
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e1e1e1;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            border-radius: 10px;
+            transition: width 3s ease-in-out;
+        }
+
+        /* Message Page Styles */
+        .message-page {
+            background: linear-gradient(135deg, #fbe9d7 0%, #f6d5f7 100%);
+            position: relative;
+            display: none;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            opacity: 0.7;
+            animation: float-up 15s linear infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .message-container {
+            max-width: 700px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ff6b9d;
+            font-weight: 700;
+        }
+
+        .message-content {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 118, 140, 0.3);
+            outline: none;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 118, 140, 0.4);
+        }
+
+        /* Countdown Page Styles */
+        .countdown-page {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            display: none;
+        }
+
+        .countdown-container {
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        .countdown-text {
+            font-size: 1.5rem;
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* Message Vault Page Styles */
+        .vault-page {
+            background: linear-gradient(135deg, #f6d5f7 0%, #fbe9d7 100%);
+            display: none;
+            padding: 30px 20px;
+        }
+
+        .vault-container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .vault-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #ff6b9d;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .message-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .message-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-card:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+        }
+
+        .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .message-card p {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #ff6b9d;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ff6b9d;
+        }
+
+        .modal-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .hooked-btn {
+            margin-top: 20px;
+            background: #222;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .hooked-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .hooked-btn i {
+            margin-right: 10px;
+            color: #ff6b9d;
+        }
+
+        /* Password Modal Styles */
+        .password-container {
+            text-align: center;
+        }
+
+        .password-container h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            border-color: #ff6b9d;
+        }
+
+        .password-hint {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .password-submit {
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 118, 140, 0.3);
+        }
+
+        .password-error {
+            color: #ff4b6e;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Final Secret Page Styles */
+        .secret-page {
+            background: linear-gradient(135deg, #222 0%, #444 100%);
+            color: white;
+            display: none;
+        }
+
+        .secret-container {
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .secret-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .secret-content {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #f0f0f0;
+        }
+
+        .heart-icon {
+            font-size: 3rem;
+            color: #ff6b9d;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .message-title, .secret-title {
+                font-size: 1.8rem;
+            }
+
+            .message-content, .secret-content {
+                font-size: 1rem;
+            }
+
+            .countdown-number {
+                font-size: 5rem;
+            }
+
+            .message-container, .modal-content {
+                padding: 25px;
+            }
+
+            .message-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-img {
+                width: 150px;
+                height: 150px;
+            }
+
+            .message-title, .secret-title {
+                font-size: 1.5rem;
+            }
+
+            .countdown-number {
+                font-size: 4rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+            }
+
+            .message-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Page -->
+    <div class="container loading-page" id="loadingPage">
+        <div class="loading-container">
+            <div class="profile-img">
+                <img src="/api/placeholder/180/180" alt="Couple Photo" width="180" height="180">
+            </div>
+            <p class="loading-text">Loading your special birthday gift from your one and only, Kavya</p>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Page -->
+    <div class="container message-page" id="messagePage">
+        <div class="floating-hearts" id="floatingHearts"></div>
+        <div class="message-container">
+            <h1 class="message-title">Happy 15th Birthday, My Love!</h1>
+            <p class="message-content">
+                To the most amazing person in my life. Today is all about celebrating you and the incredible light you bring into my world every single day. I created this little digital gift to show you just how special you are to me. Each click will reveal a new reason why I'm so grateful to have you in my life.
+            </p>
+            <button class="btn" id="exploreBtn">Explore Your Gift</button>
+        </div>
+    </div>
+
+    <!-- Countdown Page -->
+    <div class="container countdown-page" id="countdownPage">
+        <div class="countdown-container">
+            <div class="countdown-number" id="countdownNumber">10</div>
+            <p class="countdown-text">Get ready for something special...</p>
+        </div>
+    </div>
+
+    <!-- Message Vault Page -->
+    <div class="container vault-page" id="vaultPage">
+        <div class="vault-container">
+            <h2 class="vault-title">15 Reasons Why You're Amazing</h2>
+            <div class="message-grid" id="messageGrid">
+                <!-- Message cards will be generated by JavaScript -->
+            </div>
+
+            <div style="text-align: center;">
+                <button class="hooked-btn" id="hookedBtn">
+                    <i>❤️</i> Hooked
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secret Page -->
+    <div class="container secret-page" id="secretPage">
+        <div class="secret-container">
+            <div class="heart-icon">❤️</div>
+            <h2 class="secret-title">My Secret Promise to You</h2>
+            <p class="secret-content">
+                This is a special place just for us. Here is my deepest promise to you on your 15th birthday. I promise to always be by your side, to support your dreams, and to cherish every moment we share together. You make me a better person, and I'm so grateful for your love. Here's to many more birthdays together!
+            </p>
+            <button class="btn" id="backToVaultBtn">Back to Messages</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h3 class="modal-title" id="modalTitle">Message Title</h3>
+            <p class="modal-text" id="modalText">Message content goes here.</p>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closePasswordModal">&times;</span>
+            <div class="password-container">
+                <h3>Enter the Secret Password</h3>
+                <input type="password" class="password-input" id="passwordInput" placeholder="Enter password...">
+                <p class="password-hint">Hint: The date we first met (DDMM)</p>
+                <p class="password-error" id="passwordError">Incorrect password. Please try again.</p>
+                <button class="password-submit" id="passwordSubmit">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pages
+            const loadingPage = document.getElementById('loadingPage');
+            const messagePage = document.getElementById('messagePage');
+            const countdownPage = document.getElementById('countdownPage');
+            const vaultPage = document.getElementById('vaultPage');
+            const secretPage = document.getElementById('secretPage');
+            
+            // Elements
+            const loadingProgress = document.getElementById('loadingProgress');
+            const exploreBtn = document.getElementById('exploreBtn');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const messageGrid = document.getElementById('messageGrid');
+            const hookedBtn = document.getElementById('hookedBtn');
+            const backToVaultBtn = document.getElementById('backToVaultBtn');
+            
+            // Modals
+            const messageModal = document.getElementById('messageModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalText = document.getElementById('modalText');
+            const closeModal = document.getElementById('closeModal');
+            const passwordModal = document.getElementById('passwordModal');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordSubmit = document.getElementById('passwordSubmit');
+            const passwordError = document.getElementById('passwordError');
+            const closePasswordModal = document.getElementById('closePasswordModal');
+            
+            // Floating hearts
+            const floatingHearts = document.getElementById('floatingHearts');
+            
+            // Messages data
+            const messages = [
+                { title: "Your Smile", content: "Your smile lights up my world. Every time you laugh, it's like sunshine breaking through clouds." },
+                { title: "Your Kindness", content: "The way you care for others is truly inspiring. Your heart is so full of kindness." },
+                { title: "Your Eyes", content: "Looking into your eyes is like finding my favorite place in the world - warm, safe, and beautiful." },
+                { title: "Our Inside Jokes", content: "Nobody makes me laugh like you do. Our inside jokes are the highlight of my day." },
+                { title: "Your Dreams", content: "I love how passionate you are about your dreams. I believe in you completely." },
+                { title: "Our First Day", content: "I still remember the first day we talked. It changed my life forever." },
+                { title: "Movie Nights", content: "Our movie nights are perfect - whether we're watching the same film for the 10th time or trying something new." },
+                { title: "Your Support", content: "You're always there for me when I need support. You make me stronger every day." },
+                { title: "Our Future", content: "Thinking about our future together fills me with joy. There's so much to look forward to." },
+                { title: "Your Voice", content: "The sound of your voice is my favorite melody. It calms me and makes me happy." },
+                { title: "Our Conversations", content: "I love our late-night conversations about everything and nothing." },
+                { title: "Your Strength", content: "Your inner strength amazes me. You face challenges with such grace." },
+                { title: "The Little Things", content: "It's the little things you do that mean the most - the thoughtful messages, the small surprises." },
+                { title: "Our Songs", content: "Every song that reminds me of you becomes my favorite. Our playlist is the soundtrack of my life." },
+                { title: "You, Simply You", content: "Just being yourself is enough. You're perfect exactly as you are." }
+            ];
+            
+            // Correct password
+            const correctPassword = "1234"; // Replace with actual password (DDMM format)
+            
+            // Initialize loading animation
+            setTimeout(() => {
+                loadingProgress.style.width = '100%';
+                setTimeout(() => {
+                    loadingPage.style.display = 'none';
+                    messagePage.style.display = 'flex';
+                    createFloatingHearts();
+                }, 3000);
+            }, 500);
+            
+            // Create floating hearts
+            function createFloatingHearts() {
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        heart.classList.add('heart');
+                        heart.innerHTML = '❤️';
+                        heart.style.left = `${Math.random() * 100}%`;
+                        heart.style.opacity = `${0.3 + Math.random() * 0.7}`;
+                        heart.style.fontSize = `${20 + Math.random() * 30}px`;
+                        heart.style.animationDuration = `${10 + Math.random() * 20}s`;
+                        floatingHearts.appendChild(heart);
+                        
+                        // Remove heart after animation
+                        setTimeout(() => {
+                            heart.remove();
+                            createFloatingHearts();
+                        }, 15000);
+                    }, i * 2000);
+                }
+            }
+            
+            // Explore button click
+            exploreBtn.addEventListener('click', function() {
+                messagePage.style.display = 'none';
+                countdownPage.style.display = 'flex';
+                startCountdown();
+            });
+            
+            // Start countdown
+            function startCountdown() {
+                let count = 10;
+                countdownNumber.textContent = count;
+                countdownNumber.style.opacity = '1';
+                countdownNumber.style.transform = 'scale(1)';
+                
+                const interval = setInterval(() => {
+                    count--;
+                    
+                    if (count >= 0) {
+                        countdownNumber.style.opacity = '0';
+                        countdownNumber.style.transform = 'scale(0.5)';
+                        
+                        setTimeout(() => {
+                            countdownNumber.textContent = count;
+                            countdownNumber.style.opacity = '1';
+                            countdownNumber.style.transform = 'scale(1)';
+                        }, 500);
+                    } else {
+                        clearInterval(interval);
+                        countdownPage.style.display = 'none';
+                        vaultPage.style.display = 'flex';
+                        createMessageCards();
+                    }
+                }, 1000);
+            }
+            
+            // Create message cards
+            function createMessageCards() {
+                messageGrid.innerHTML = '';
+                
+                messages.forEach((message, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('message-card');
+                    card.innerHTML = `
+                        <h3>${message.title}</h3>
+                        <p>Click to reveal</p>
+                    `;
+                    
+                    card.addEventListener('click', function() {
+                        openModal(message.title, message.content);
+                    });
+                    
+                    messageGrid.appendChild(card);
+                });
+            }
+            
+            // Open message modal
+            function openModal(title, content) {
+                modalTitle.textContent = title;
+                modalText.textContent = content;
+                messageModal.classList.add('active');
+            }
+            
+            // Close message modal
+            closeModal.addEventListener('click', function() {
+                messageModal.classList.remove('active');
+            });
+            
+            // Hooked button click
+            hookedBtn.addEventListener('click', function() {
+                passwordModal.classList.add('active');
+                passwordInput.focus();
+                passwordError.style.display = 'none';
+            });
+            
+            // Password submit
+            passwordSubmit.addEventListener('click', function() {
+                checkPassword();
+            });
+            
+            // Check password on enter key
+            passwordInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            // Check password function
+            function checkPassword() {
+                const enteredPassword = passwordInput.value;
+                
+                if (enteredPassword === correctPassword) {
+                    passwordModal.classList.remove('active');
+                    vaultPage.style.display = 'none';
+                    secretPage.style.display = 'flex';
+                    passwordInput.value = '';
+                } else {
+                    passwordError.style.display = 'block';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+            
+            // Close password modal
+            closePasswordModal.addEventListener('click', function() {
+                passwordModal.classList.remove('active');
+            });
+            
+            // Back to vault button
+            backToVaultBtn.addEventListener('click', function() {
+                secretPage.style.display = 'none';
+                vaultPage.style.display = 'flex';
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === messageModal) {
+                    messageModal.classList.remove('active');
+                }
+                if (e.target === passwordModal) {
+                    passwordModal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
